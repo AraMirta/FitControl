@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'edit_profile_screen.dart';
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color primaryGreen = const Color(0xFF4CAF50); // Verde principal
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5FFFA), // Verde muy claro (menta)
+      appBar: AppBar(
+        backgroundColor: primaryGreen,
+        foregroundColor: Colors.white,
+        title: const Text('Mi Perfil'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Foto de perfil
+            CircleAvatar(
+              radius: 60,
+              backgroundImage: AssetImage('assets/images/perfil.png'), // Asegurate de agregar esta imagen
+              backgroundColor: Colors.grey.shade200,
+            ),
+            const SizedBox(height: 20),
+
+            // Tarjeta de datos personales
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    infoRow(Icons.person, 'Nombre', 'Arabel Mirta'),
+                    const Divider(),
+                    infoRow(Icons.cake, 'Edad', '40'),
+                    const Divider(),
+                    infoRow(Icons.email, 'Email', 'arabelmirta@gmail.com'),
+                    const Divider(),
+                    infoRow(Icons.flag, 'Objetivo',
+                        'Comer saludable, hacer ejercicio, bajar de peso (4kg)',
+                        color: Colors.green.shade700),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryGreen,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                );
+              },
+              icon: const Icon(Icons.edit),
+              label: const Text('Editar perfil'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget infoRow(IconData icon, String label, String value, {Color? color}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: color ?? Colors.black54),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text(value,
+                  style: TextStyle(fontSize: 16, color: color ?? Colors.black87)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
