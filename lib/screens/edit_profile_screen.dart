@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/user_preferences.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -9,19 +10,32 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   // Controladores para cada campo
-  final _nameController = TextEditingController(text: 'Arabel Mirta');
-  final _ageController = TextEditingController(text: '40');
-  final _emailController = TextEditingController(text: 'arabelmirta@gmail.com');
-  final _goalController = TextEditingController(
-    text: 'Comer saludable, tener hábitos de ejercicios, bajar de peso (4kg)',
-  );
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _goalController = TextEditingController();
+  UserPreferences? userPrefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    userPrefs = await UserPreferences.getInstance();
+    setState(() {
+      _nameController.text = userPrefs!.getUserName();
+      _ageController.text = userPrefs!.getUserAge().toString();
+      _emailController.text = userPrefs!.getUserEmail();
+      _goalController.text = userPrefs!.getUserGoal();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Editar Perfil'),
-      ),
+      appBar: AppBar(title: Text('Editar Perfil')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -47,13 +61,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Por ahora solo mostramos los cambios por consola
-                print('Nombre: ${_nameController.text}');
-                print('Edad: ${_ageController.text}');
-                print('Email: ${_emailController.text}');
-                print('Objetivo: ${_goalController.text}');
-                Navigator.pop(context); // Volver atrás
+              onPressed: () async {
+                // Guardar los datos en SharedPreferences
+                await userPrefs!.saveUserName(_nameController.text);
+                await userPrefs!.saveUserAge(
+                  int.tryParse(_ageController.text) ?? 0,
+                );
+                await userPrefs!.saveUserEmail(_emailController.text);
+                await userPrefs!.saveUserGoal(_goalController.text);
+
+                // Mostrar mensaje de confirmación
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('¡Perfil actualizado correctamente!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+
+                Navigator.pop(
+                  context,
+                  true,
+                ); // Volver atrás indicando que se guardaron cambios
               },
               child: Text('Guardar cambios'),
             ),

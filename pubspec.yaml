@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   fl_chart: ^1.0.0
   table_calendar: ^3.0.9
+  shared_preferences: ^2.5.3
   
 dev_dependencies:
   flutter_test:

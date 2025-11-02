@@ -1,7 +1,7 @@
 // lib/screens/weight_screen.dart
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+import '../services/user_preferences.dart';
 
 class WeightScreen extends StatefulWidget {
   const WeightScreen({super.key});
@@ -12,23 +12,50 @@ class WeightScreen extends StatefulWidget {
 }
 
 class _WeightScreenState extends State<WeightScreen> {
-  // Datos de ejemplo (simulados)
+  // Datos de persistencia
   double currentWeight = 70.0; // Peso actual
-  double goalWeight = 60.0;    // Meta
-  List<double> weeklyProgress = [70.0, 68.5, 67.0, 65.5, 64.0, 63.0, 62.0]; // Progreso semanal
+  double goalWeight = 60.0; // Meta
+  List<double> weeklyProgress = [
+    70.0,
+    68.5,
+    67.0,
+    65.5,
+    64.0,
+    63.0,
+    62.0,
+  ]; // Progreso semanal
+  UserPreferences? userPrefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    userPrefs = await UserPreferences.getInstance();
+    setState(() {
+      currentWeight = userPrefs!.getCurrentWeight();
+      goalWeight = userPrefs!.getTargetWeight();
+      weeklyProgress = userPrefs!.getWeeklyProgress();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    double progressPercentage = ((currentWeight - goalWeight) / (weeklyProgress.first - goalWeight)) * 100;
+    double progressPercentage =
+        ((currentWeight - goalWeight) / (weeklyProgress.first - goalWeight)) *
+        100;
 
     var lineChartBarData2 = LineChartBarData(
-                      spots: weeklyProgress.asMap().entries.map((entry) {
-                        return FlSpot(entry.key.toDouble(), entry.value);
-                      }).toList(),
-                      isCurved: true,
-                      color: const Color.fromARGB(255, 94, 191, 116),
-                      dotData: FlDotData(show: true),
-                    );
+      spots:
+          weeklyProgress.asMap().entries.map((entry) {
+            return FlSpot(entry.key.toDouble(), entry.value);
+          }).toList(),
+      isCurved: true,
+      color: const Color.fromARGB(255, 94, 191, 116),
+      dotData: FlDotData(show: true),
+    );
     var lineChartBarData = lineChartBarData2;
     return Scaffold(
       appBar: AppBar(title: Text("Progreso de Peso")),
@@ -42,7 +69,13 @@ class _WeightScreenState extends State<WeightScreen> {
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text("Tu progreso", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      "Tu progreso",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     SizedBox(height: 10),
                     LinearProgressIndicator(
                       value: progressPercentage / 100,
@@ -51,8 +84,12 @@ class _WeightScreenState extends State<WeightScreen> {
                       minHeight: 20,
                     ),
                     SizedBox(height: 10),
-                    Text("${progressPercentage.toStringAsFixed(1)}% hacia tu meta"),
-                    Text("${currentWeight.toStringAsFixed(1)} kg / ${goalWeight.toStringAsFixed(1)} kg"),
+                    Text(
+                      "${progressPercentage.toStringAsFixed(1)}% hacia tu meta",
+                    ),
+                    Text(
+                      "${currentWeight.toStringAsFixed(1)} kg / ${goalWeight.toStringAsFixed(1)} kg",
+                    ),
                   ],
                 ),
               ),
@@ -60,7 +97,10 @@ class _WeightScreenState extends State<WeightScreen> {
 
             // Gráfico de progreso
             SizedBox(height: 20),
-            Text("Evolución semanal", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              "Evolución semanal",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             SizedBox(
               height: 200,
               child: LineChart(
@@ -72,9 +112,7 @@ class _WeightScreenState extends State<WeightScreen> {
                   maxX: 6,
                   minY: goalWeight - 2,
                   maxY: weeklyProgress.first + 2,
-                  lineBarsData: [
-                    lineChartBarData,
-                  ],
+                  lineBarsData: [lineChartBarData],
                 ),
               ),
             ),
@@ -96,32 +134,39 @@ class _WeightScreenState extends State<WeightScreen> {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text("Actualizar peso"),
-        content: TextField(
-          controller: weightController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: "Nuevo peso (kg)"),
-        ),
-        actions: [
-          TextButton(
-            child: Text("Cancelar"),
-            onPressed: () => Navigator.of(ctx).pop(),
+      builder:
+          (ctx) => AlertDialog(
+            title: Text("Actualizar peso"),
+            content: TextField(
+              controller: weightController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: "Nuevo peso (kg)"),
+            ),
+            actions: [
+              TextButton(
+                child: Text("Cancelar"),
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
+              TextButton(
+                child: Text("Guardar"),
+                onPressed: () async {
+                  if (weightController.text.isNotEmpty) {
+                    double newWeight = double.parse(weightController.text);
+
+                    // Guardar en SharedPreferences
+                    await userPrefs!.saveCurrentWeight(newWeight);
+                    weeklyProgress.add(newWeight);
+                    await userPrefs!.saveWeeklyProgress(weeklyProgress);
+
+                    setState(() {
+                      currentWeight = newWeight;
+                    });
+                    Navigator.of(ctx).pop();
+                  }
+                },
+              ),
+            ],
           ),
-          TextButton(
-            child: Text("Guardar"),
-            onPressed: () {
-              if (weightController.text.isNotEmpty) {
-                setState(() {
-                  currentWeight = double.parse(weightController.text);
-                  weeklyProgress.add(currentWeight); // Añade el nuevo peso al progreso
-                });
-                Navigator.of(ctx).pop();
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 }

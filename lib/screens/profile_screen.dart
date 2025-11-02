@@ -1,8 +1,36 @@
 import 'package:flutter/material.dart';
 import 'edit_profile_screen.dart';
+import '../services/user_preferences.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String userName = 'Usuario';
+  int userAge = 0;
+  String userEmail = '';
+  String userGoal = 'Sin objetivo definido';
+  UserPreferences? userPrefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    userPrefs = await UserPreferences.getInstance();
+    setState(() {
+      userName = userPrefs!.getUserName();
+      userAge = userPrefs!.getUserAge();
+      userEmail = userPrefs!.getUserEmail();
+      userGoal = userPrefs!.getUserGoal();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,28 +50,43 @@ class ProfileScreen extends StatelessWidget {
             // Foto de perfil
             CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage('assets/images/perfil.png'), // Asegurate de agregar esta imagen
+              backgroundImage: AssetImage(
+                'assets/images/perfil.png',
+              ), // Asegurate de agregar esta imagen
               backgroundColor: Colors.grey.shade200,
             ),
             const SizedBox(height: 20),
 
             // Tarjeta de datos personales
             Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 3,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    infoRow(Icons.person, 'Nombre', 'Arabel Mirta'),
+                    infoRow(Icons.person, 'Nombre', userName),
                     const Divider(),
-                    infoRow(Icons.cake, 'Edad', '40'),
+                    infoRow(
+                      Icons.cake,
+                      'Edad',
+                      userAge > 0 ? userAge.toString() : 'No especificado',
+                    ),
                     const Divider(),
-                    infoRow(Icons.email, 'Email', 'arabelmirta@gmail.com'),
+                    infoRow(
+                      Icons.email,
+                      'Email',
+                      userEmail.isEmpty ? 'No especificado' : userEmail,
+                    ),
                     const Divider(),
-                    infoRow(Icons.flag, 'Objetivo',
-                        'Comer saludable, hacer ejercicio, bajar de peso (4kg)',
-                        color: Colors.green.shade700),
+                    infoRow(
+                      Icons.flag,
+                      'Objetivo',
+                      userGoal,
+                      color: Colors.green.shade700,
+                    ),
                   ],
                 ),
               ),
@@ -54,14 +97,25 @@ class ProfileScreen extends StatelessWidget {
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfileScreen(),
+                  ),
                 );
+                if (result == true) {
+                  // Recargar datos si se guardaron cambios
+                  _loadUserData();
+                }
               },
               icon: const Icon(Icons.edit),
               label: const Text('Editar perfil'),
@@ -82,11 +136,18 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(value,
-                  style: TextStyle(fontSize: 16, color: color ?? Colors.black87)),
+              Text(
+                value,
+                style: TextStyle(fontSize: 16, color: color ?? Colors.black87),
+              ),
             ],
           ),
         ),
