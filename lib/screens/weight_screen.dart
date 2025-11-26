@@ -161,7 +161,9 @@ class _WeightScreenState extends State<WeightScreen> {
                     setState(() {
                       currentWeight = newWeight;
                     });
-                    Navigator.of(ctx).pop();
+                    if (ctx.mounted) {
+                      Navigator.of(ctx).pop();
+                    }
                   }
                 },
               ),

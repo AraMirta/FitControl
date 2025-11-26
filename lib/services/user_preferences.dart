@@ -16,8 +16,10 @@ class UserPreferences {
   UserPreferences._();
 
   static Future<UserPreferences> getInstance() async {
-    _instance ??= UserPreferences._();
-    _prefs ??= await SharedPreferences.getInstance();
+    if (_instance == null) {
+      _prefs = await SharedPreferences.getInstance();
+      _instance = UserPreferences._();
+    }
     return _instance!;
   }
 

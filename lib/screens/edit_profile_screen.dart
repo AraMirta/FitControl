@@ -71,17 +71,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 await userPrefs!.saveUserGoal(_goalController.text);
 
                 // Mostrar mensaje de confirmación
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('¡Perfil actualizado correctamente!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('¡Perfil actualizado correctamente!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
 
-                Navigator.pop(
-                  context,
-                  true,
-                ); // Volver atrás indicando que se guardaron cambios
+                  Navigator.pop(
+                    context,
+                    true,
+                  ); // Volver atrás indicando que se guardaron cambios
+                }
               },
               child: Text('Guardar cambios'),
             ),
