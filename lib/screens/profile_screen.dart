@@ -67,24 +67,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    infoRow(Icons.person, 'Nombre', userName),
+                    infoRow(
+                      Icons.person,
+                      'Nombre',
+                      userName.isEmpty ? 'Jane Doe' : userName,
+                    ),
                     const Divider(),
                     infoRow(
                       Icons.cake,
                       'Edad',
-                      userAge > 0 ? userAge.toString() : 'No especificado',
+                      userAge > 0 ? userAge.toString() : '0',
                     ),
                     const Divider(),
                     infoRow(
                       Icons.email,
                       'Email',
-                      userEmail.isEmpty ? 'No especificado' : userEmail,
+                      userEmail.isEmpty ? 'usuario@dominio.com' : userEmail,
                     ),
                     const Divider(),
                     infoRow(
                       Icons.flag,
                       'Objetivo',
-                      userGoal,
+                      userGoal.isEmpty
+                          ? 'Ej: Bajar 5 kg en 2 meses '
+                          : userGoal,
                       color: Colors.green.shade700,
                     ),
                   ],
