@@ -130,3 +130,16 @@ Este proyecto está desarrollado en Flutter para el seguimiento de hábitos fitn
 Para ayuda con el desarrollo en Flutter, consulta la
 [documentación online](https://docs.flutter.dev/), que ofrece tutoriales,
 ejemplos, guías de desarrollo móvil y una referencia completa de la API.
+
+
+## Levantar el proyecto
+
+### Comando para ver los emuladores en los que se puede levantar
+flutter emulators
+
+### Comando para abrir emulador (uno a la vez)
+flutter emulators --launch Small_Desktop
+flutter emulators --launch Pixel 7
+
+### Comando para levantar aplicacion en el emulador
+flutter run
