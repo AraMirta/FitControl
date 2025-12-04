@@ -10,9 +10,47 @@ class Workout {
   final String name;
   final String duration;
   final String day;
+  bool completed;
 
-  Workout({required this.name, required this.duration, required this.day});
+
+  Workout({required this.name, 
+          required this.duration, 
+          required this.day,
+          this.completed = false});
 }
+
+class DayRoutine {
+  final String day; // "Lunes", "Martes", ...
+  List<Workout> activities;
+
+
+  DayRoutine({required this.day, List<Workout>? activities})
+      : activities = activities ?? [];
+}
+
+
+List<DayRoutine> dayRoutinesFromWorkouts(List<Workout> workoutsList) {
+  final Map<String, List<Workout>> map = {};
+  for (final w in workoutsList) {
+    map.putIfAbsent(w.day, () => []).add(w);
+  }
+  final result = <DayRoutine>[];
+  // Si querés un orden fijo:
+  final order = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  for (final d in order) {
+    final acts = map[d] ?? [];
+    if (acts.isNotEmpty) result.add(DayRoutine(day: d, activities: acts));
+  }
+  // Agregar días que no estén en el order
+  for (final entry in map.entries) {
+    if (!order.contains(entry.key)) result.add(DayRoutine(day: entry.key, activities: entry.value));
+  }
+  return result;
+}
+
+
+final List<DayRoutine> sampleDayRoutines = dayRoutinesFromWorkouts(workouts);
+
 
 class User {
   final String name;
