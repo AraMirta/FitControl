@@ -29,7 +29,7 @@ class UserPreferences {
   }
 
   String getUserName() {
-    return _prefs!.getString(_nameKey) ?? 'Usuario';
+    return _prefs!.getString(_nameKey) ?? '';
   }
 
   Future<void> saveUserAge(int age) async {
@@ -53,7 +53,12 @@ class UserPreferences {
   }
 
   String getUserGoal() {
-    return _prefs!.getString(_goalKey) ?? 'Sin objetivo definido';
+    final String? val = _prefs!.getString(_goalKey);
+    if (val == null) return '';
+    final normalized = val.trim().toLowerCase();
+    // Normalize common legacy placeholder variants to empty
+    if (normalized == 'sin objetivo definido' || normalized == 'sin objetivo') return '';
+    return val;
   }
 
   // Métodos para peso
