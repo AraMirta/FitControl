@@ -17,6 +17,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   UserPreferences? userPrefs;
   String _ageError = '';
   String _nameError = '';
+  String _emailError = '';
   int? _selectedAge;
 
   @override
@@ -24,6 +25,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     _loadUserData();
     _nameController.addListener(_validateName);
+    _emailController.addListener(_validateEmail);
   }
 
   void _validateName() {
@@ -53,9 +55,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
+  void _validateEmail() {
+    setState(() {
+      final text = _emailController.text.trim();
+      // Email is optional: no error when empty
+      if (text.isEmpty) {
+        _emailError = '';
+        return;
+      }
+      // Simple regex: something@something.suffix (suffix at least 2 chars)
+      final emailReg = RegExp(r"^[^@\s]+@[^@\s]+\.[^@\s]{2,}");
+      if (!emailReg.hasMatch(text)) {
+        _emailError = 'Formato de email no válido';
+      } else {
+        _emailError = '';
+      }
+    });
+  }
+
   @override
   void dispose() {
     _nameController.removeListener(_validateName);
+    _emailController.removeListener(_validateEmail);
     _ageController.dispose();
     _nameController.dispose();
     _emailController.dispose();
@@ -72,6 +93,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _ageController.text = _selectedAge?.toString() ?? '';
       _emailController.text = userPrefs!.getUserEmail();
       _goalController.text = userPrefs!.getUserGoal();
+      // validate fields after loading
+      _validateName();
+      _validateAge();
+      _validateEmail();
     });
   }
 
@@ -118,7 +143,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 TextField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    errorText: _emailError.isNotEmpty ? _emailError : null,
+                  ),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 TextField(
@@ -128,11 +156,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed:
-                      _ageError.isEmpty &&
-                              _nameError.isEmpty &&
-                              _selectedAge != null &&
-                              _nameController.text.isNotEmpty
+                    onPressed:
+                        _ageError.isEmpty &&
+                          _nameError.isEmpty &&
+                          _emailError.isEmpty &&
+                          _selectedAge != null &&
+                          _nameController.text.isNotEmpty
                           ? () async {
                             // Guardar los datos en SharedPreferences
                             await userPrefs!.saveUserName(_nameController.text);
