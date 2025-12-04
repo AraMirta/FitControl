@@ -37,6 +37,7 @@ dependencies:
   fl_chart: ^0.63.0
   table_calendar: ^3.0.9
   shared_preferences: ^2.5.3
+  path_provider: ^2.1.4 
 
 dev_dependencies:
   flutter_test:

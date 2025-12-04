@@ -115,7 +115,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                         return ListTile(
                           leading: Icon(_getWorkoutIcon(a.name)),
                           title: Text(a.name),
-                          subtitle: Text("${a.duration} segundos"),
+                          subtitle: Text("${a.duration} minutos"),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -193,9 +193,9 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             const SizedBox(height: 10),
             DropdownButtonFormField<int>(
               value: selectedDuration,
-              decoration: const InputDecoration(labelText: "Duración (segundos)"),
+              decoration: const InputDecoration(labelText: "Duración (minutos)"),
               items: availableDurations
-                  .map((d) => DropdownMenuItem(value: d, child: Text("$d s")))
+                  .map((d) => DropdownMenuItem(value: d, child: Text("$d min")))
                   .toList(),
               onChanged: (v) => selectedDuration = v,
             ),
@@ -255,10 +255,10 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             const SizedBox(height: 10),
             DropdownButtonFormField<int>(
               value: selectedDuration,
-              decoration: const InputDecoration(labelText: "Duración (segundos)"),
+              decoration: const InputDecoration(labelText: "Duración (minutos)"),
               items: availableDurations
                   .map((d) =>
-                      DropdownMenuItem(value: d, child: Text("$d s")))
+                      DropdownMenuItem(value: d, child: Text("$d min")))
                   .toList(),
               onChanged: (v) => selectedDuration = v!,
             ),

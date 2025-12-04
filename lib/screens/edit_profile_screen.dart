@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
                 DropdownButtonFormField<int>(
-                  initialValue: _selectedAge,
+                  value: _selectedAge,
                   decoration: InputDecoration(
                     labelText: 'Edad',
                     errorText: _ageError.isNotEmpty ? _ageError : null,

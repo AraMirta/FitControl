@@ -32,7 +32,7 @@ final List<String> availableWorkouts = [
   "Cardio intenso",
   "Fuerza tren superior",
   "Fuerza tren inferior",
-  "HIIT",
+  "Sentadillas",
   "Funcional",
   "Abdominales",
   "Yoga",
@@ -51,6 +51,21 @@ final List<DayRoutine> sampleDayRoutines = [
   DayRoutine(day: "Martes", activities: [
     Workout(name: "Fuerza tren inferior", duration: 25),
   ]),
+  DayRoutine(day: "Miércoles", activities: [
+    Workout(name: "Yoga", duration: 30),
+  ]),
+  DayRoutine(day: "Jueves", activities: [
+    Workout(name: "Cardio ligero", duration: 15),
+    Workout(name: "Estiramientos", duration: 10),
+  ]),
+  DayRoutine(day: "Viernes", activities: [
+    Workout(name: "Fuerza tren superior", duration: 20),
+    Workout(name: "Abdominales", duration: 10),
+  ]),
+  DayRoutine(day: "Sábado", activities: [
+    Workout(name: "Funcional", duration: 25),
+  ]),
+
 ];
 
 
