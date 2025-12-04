@@ -16,16 +16,19 @@ class DayRoutine {
 }
 
 class Recipe {
-  String name;
-  String day;
-  String ingredients;
+  String name;        // Nombre de la receta
+  String day;         // Día de la semana
+  String timeOfDay;   // Mañana, tarde, noche
+  List<String> ingredients; // Ingredientes
 
   Recipe({
     required this.name,
     required this.day,
+    required this.timeOfDay,
     required this.ingredients,
   });
 }
+
 // Lista de actividades para seleccionar
 final List<String> availableWorkouts = [
   "Cardio ligero",
@@ -77,10 +80,32 @@ final List<DayRoutine> sampleDayRoutines = [
 
 //datos ejemplos de recetas.
 final List<Recipe> sampleRecipes = [
-  Recipe(name: "Ensalada de quinoa", ingredients: "Quinoa, espinaca, tomate, aguacate", day: "Lunes"),
-  Recipe(name: "Smoothie verde", ingredients: "Espinaca, plátano, leche de almendras", day: "Martes"),
-  Recipe(name: "Bowl de avena", ingredients: "Avena, leche, frutos rojos, miel", day: "Miércoles"),
-  Recipe(name: "Pollo al horno", ingredients: "Pechuga de pollo, limón, romero, papas", day: "Jueves"),
-  Recipe(name: "Sopa de lentejas", ingredients: "Lentejas, zanahoria, cebolla, ajo", day: "Viernes"),
+  Recipe(
+    name: "Avena con frutas",
+    day: "Lunes",
+    timeOfDay: "Mañana",
+    ingredients: ["Avena", "Leche", "Banana", "Frutos rojos"],
+  ),
+  Recipe(
+    name: "Ensalada de pollo",
+    day: "Lunes",
+    timeOfDay: "Almuerzo",
+    ingredients: ["Pollo", "Lechuga", "Tomate", "Aceite de oliva"],
+  ),
+  Recipe(
+    name: "Yogur con nueces",
+    day: "Lunes",
+    timeOfDay: "Merienda",
+    ingredients: ["Yogur natural", "Nueces", "Miel"],
+  ),
+  // Repetir para otros días y horarios
 ];
-
+final List<String> daysOfWeek = [
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo",
+];

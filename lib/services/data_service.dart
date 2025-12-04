@@ -22,5 +22,24 @@ class DataService {
     (a) => a.name == workout.name && a.duration == workout.duration
   );
 }
+  // Lista interna de recetas
+  static final List<Recipe> _recipes = [];
+
+  // Devuelve todas las recetas
+  static List<Recipe> getAllRecipes() {
+    return List<Recipe>.from(_recipes); // devuelve copia para evitar cambios directos
+  }
+
+  // Agrega una receta
+  static void addRecipe(Recipe recipe) {
+    _recipes.add(recipe);
+  }
+
+  // Elimina una receta
+  static void removeRecipe(Recipe recipe) {
+    _recipes.remove(recipe);
+  }
+
+  
 
 }
