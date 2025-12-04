@@ -35,7 +35,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   ];
 
   // Duración fija
-  final List<int> availableDurations = [30, 45, 60, 90, 120];
+  final List<int> availableDurations = [5, 10, 15, 20, 25, 30, 45, 60, 90, 120];
 
   @override
   void initState() {
