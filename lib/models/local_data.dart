@@ -1,78 +1,65 @@
-class Recipe {
-  final String name;
-  final String ingredients;
-  final String day; // Ej: "Lunes"
-
-  Recipe({required this.name, required this.ingredients, required this.day});
-}
-
 class Workout {
-  final String name;
-  final String duration;
-  final String day;
-  bool completed;
-
-
-  Workout({required this.name, 
-          required this.duration, 
-          required this.day,
-          this.completed = false});
+  String name;
+  int duration; // minutos
+  
+  Workout({required this.name, required this.duration});
 }
 
 class DayRoutine {
-  final String day; // "Lunes", "Martes", ...
+  String day;
   List<Workout> activities;
 
-
-  DayRoutine({required this.day, List<Workout>? activities})
-      : activities = activities ?? [];
+  DayRoutine({
+    required this.day,
+    required this.activities,
+  });
 }
 
+class Recipe {
+  String name;
+  String day;
+  String ingredients;
 
-List<DayRoutine> dayRoutinesFromWorkouts(List<Workout> workoutsList) {
-  final Map<String, List<Workout>> map = {};
-  for (final w in workoutsList) {
-    map.putIfAbsent(w.day, () => []).add(w);
-  }
-  final result = <DayRoutine>[];
-  // Si querés un orden fijo:
-  final order = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-  for (final d in order) {
-    final acts = map[d] ?? [];
-    if (acts.isNotEmpty) result.add(DayRoutine(day: d, activities: acts));
-  }
-  // Agregar días que no estén en el order
-  for (final entry in map.entries) {
-    if (!order.contains(entry.key)) result.add(DayRoutine(day: entry.key, activities: entry.value));
-  }
-  return result;
+  Recipe({
+    required this.name,
+    required this.day,
+    required this.ingredients,
+  });
 }
+// Lista de actividades para seleccionar
+final List<String> availableWorkouts = [
+  "Cardio ligero",
+  "Cardio intenso",
+  "Fuerza tren superior",
+  "Fuerza tren inferior",
+  "HIIT",
+  "Funcional",
+  "Abdominales",
+  "Yoga",
+  "Estiramientos"
+];
+
+// Duraciones disponibles
+final List<int> availableDurations = [5, 10, 15, 20, 25, 30];
+
+// Rutinas de ejemplo
+final List<DayRoutine> sampleDayRoutines = [
+  DayRoutine(day: "Lunes", activities: [
+    Workout(name: "Cardio intenso", duration: 20),
+    Workout(name: "Abdominales", duration: 10),
+  ]),
+  DayRoutine(day: "Martes", activities: [
+    Workout(name: "Fuerza tren inferior", duration: 25),
+  ]),
+];
 
 
-final List<DayRoutine> sampleDayRoutines = dayRoutinesFromWorkouts(workouts);
-
-
-class User {
-  final String name;
-  final double weight;
-  final String goal; // "habitos", "ejercicio", "peso"
-
-  User({required this.name, required this.weight, required this.goal});
-}
-
-// Datos de ejemplo: recetas
-final List<Recipe> recipes = [
+//datos ejemplos de recetas.
+final List<Recipe> sampleRecipes = [
   Recipe(name: "Ensalada de quinoa", ingredients: "Quinoa, espinaca, tomate, aguacate", day: "Lunes"),
   Recipe(name: "Smoothie verde", ingredients: "Espinaca, plátano, leche de almendras", day: "Martes"),
   Recipe(name: "Bowl de avena", ingredients: "Avena, leche, frutos rojos, miel", day: "Miércoles"),
   Recipe(name: "Pollo al horno", ingredients: "Pechuga de pollo, limón, romero, papas", day: "Jueves"),
   Recipe(name: "Sopa de lentejas", ingredients: "Lentejas, zanahoria, cebolla, ajo", day: "Viernes"),
 ];
-// Datos de ejemplo: entrenamientos
-final List<Workout> workouts = [
-  Workout(name: "Yoga matutino", duration: "20 mins", day: "Lunes"),
-  Workout(name: "Cardio intenso", duration: "30 mins", day: "Martes"),
-  Workout(name: "Pesas y resistencia", duration: "45 mins", day: "Miércoles"),
-  Workout(name: "Pilates", duration: "30 mins", day: "Jueves"),
-  Workout(name: "Estiramientos", duration: "15 mins", day: "Viernes"),
-];
+

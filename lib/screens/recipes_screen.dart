@@ -10,9 +10,9 @@ class RecipesScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF3E5F5), // Lavanda
       appBar: AppBar(title: const Text("Recetas Saludables"), backgroundColor: Colors.deepPurple, ),
       body: ListView.builder(
-        itemCount: recipes.length,
+        itemCount: sampleRecipes.length,
         itemBuilder: (ctx, index) {
-          final recipe = recipes[index];
+          final recipe = sampleRecipes[index];
 
            return Card(
             elevation: 4,

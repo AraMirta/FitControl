@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/local_data.dart';
 import '../services/data_service.dart';
 
-
 class WorkoutsScreen extends StatefulWidget {
   const WorkoutsScreen({Key? key}) : super(key: key);
-
 
   @override
   State<WorkoutsScreen> createState() => _WorkoutsScreenState();
@@ -17,6 +15,22 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   TextEditingController searchCtrl = TextEditingController();
   List<DayRoutine> filteredRoutines = [];
 
+  // Lista fija de ejercicios predefinidos
+  final List<String> availableExercises = [
+    "Sentadillas",
+    "Abdominales",
+    "Burpees",
+    "Plancha",
+    "Zancadas",
+    "Flexiones",
+    "Mountain Climbers",
+    "Salto de cuerda",
+    "HIIT",
+    "Funcional",
+  ];
+
+  // Duración fija
+  final List<int> availableDurations = [30, 45, 60, 90, 120];
 
   @override
   void initState() {
@@ -24,24 +38,27 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     dayRoutines = DataService.getAll();
     filteredRoutines = dayRoutines;
     searchCtrl.addListener(_filterRoutines);
-
   }
+
   void _filterRoutines() {
-  final query = searchCtrl.text.toLowerCase();
+    final query = searchCtrl.text.toLowerCase();
 
-  setState(() {
-    if (query.isEmpty) {
-      filteredRoutines = dayRoutines;
-    } else {
-      filteredRoutines = dayRoutines.map((r) {
-        final activities = r.activities.where((a) =>
-            a.name.toLowerCase().contains(query)).toList();
-        return DayRoutine(day: r.day, activities: activities);
-      }).where((r) => r.activities.isNotEmpty).toList();
-    }
-  });
-}
-
+    setState(() {
+      if (query.isEmpty) {
+        filteredRoutines = dayRoutines;
+      } else {
+        filteredRoutines = dayRoutines
+            .map((r) {
+              final activities = r.activities
+                  .where((a) => a.name.toLowerCase().contains(query))
+                  .toList();
+              return DayRoutine(day: r.day, activities: activities);
+            })
+            .where((r) => r.activities.isNotEmpty)
+            .toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +77,10 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-               ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
             ),
           ),
         ),
@@ -71,57 +90,61 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
         itemCount: filteredRoutines.length,
         itemBuilder: (context, dayIndex) {
           final dayRoutine = filteredRoutines[dayIndex];
+
           return Card(
             color: Colors.purple.shade50,
-            elevation: 4,
+            elevation: 3,
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
             child: ExpansionTile(
-              title: Text(dayRoutine.day, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              title: Text(
+                dayRoutine.day,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 18),
+              ),
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Column(
                     children: [
-                      // Lista de actividades del día
+                      // Lista de actividades
                       ...List.generate(dayRoutine.activities.length, (index) {
                         final a = dayRoutine.activities[index];
-                        return Dismissible(
-                          key: Key('${dayRoutine.day}_${a.name}_$index'),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: const Icon(Icons.delete_forever, color: Colors.white),
-                          ),
-                          onDismissed: (_) {
-                            setState(() {
-                              DataService.removeActivity(dayRoutine.day, a);
-                              dayRoutines = DataService.getAll();
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Actividad "${a.name}" eliminada.')));
-                          },
-                          child: CheckboxListTile(
-                            value: false, // si querés marcar completada, podés agregar propiedad en Workout
-                            onChanged: (val) {
-                              // Por ahora solo visual; si querés persistir 'completada', agregamos atributo en Workout
-                            },
-                            title: Text('${a.name}'),
-                            subtitle: Text('${a.duration}'),
-                            secondary: Icon(_getWorkoutIcon(a.name)),
+                        return ListTile(
+                          leading: Icon(_getWorkoutIcon(a.name)),
+                          title: Text(a.name),
+                          subtitle: Text("${a.duration} segundos"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () =>
+                                    _onEditActivityPressed(dayRoutine.day, a),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () =>
+                                    _deleteActivity(dayRoutine.day, a),
+                              ),
+                            ],
                           ),
                         );
                       }),
+
                       const SizedBox(height: 8),
+
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
-                          onPressed: () => _onAddActivityPressed(dayRoutine.day),
+                          onPressed: () =>
+                              _onAddActivityPressed(dayRoutine.day),
                           icon: const Icon(Icons.add),
-                          label: const Text('Agregar actividad'),
+                          label: const Text("Agregar actividad"),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -133,55 +156,158 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     );
   }
 
-
   IconData _getWorkoutIcon(String name) {
     final n = name.toLowerCase();
     if (n.contains('yoga')) return Icons.self_improvement;
     if (n.contains('cardio')) return Icons.directions_run;
-    if (n.contains('pesas') || n.contains('resistencia')) return Icons.fitness_center;
-    if (n.contains('pilates')) return Icons.accessibility_new;
-    if (n.contains('estirami')) return Icons.accessibility;
+    if (n.contains('pesas') || n.contains('resistencia'))
+      return Icons.fitness_center;
+    if (n.contains('funcional')) return Icons.sports_gymnastics;
+    if (n.contains('hiit')) return Icons.flash_on;
     return Icons.sports;
   }
 
+  // -----------------------------
+  //   AGREGAR ACTIVIDAD
+  // -----------------------------
 
   void _onAddActivityPressed(String day) {
-    final nameCtrl = TextEditingController();
-    final durCtrl = TextEditingController();
+    String? selectedExercise = availableExercises.first;
+    int? selectedDuration = availableDurations.first;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Agregar actividad'),
+        title: const Text("Agregar actividad"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Nombre')),
-            TextField(controller: durCtrl, decoration: const InputDecoration(labelText: 'Duración (ej: 20 mins)'), keyboardType: TextInputType.text),
+            DropdownButtonFormField<String>(
+              value: selectedExercise,
+              decoration: const InputDecoration(labelText: "Ejercicio"),
+              items: availableExercises
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+              onChanged: (v) => selectedExercise = v,
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<int>(
+              value: selectedDuration,
+              decoration: const InputDecoration(labelText: "Duración (segundos)"),
+              items: availableDurations
+                  .map((d) => DropdownMenuItem(value: d, child: Text("$d s")))
+                  .toList(),
+              onChanged: (v) => selectedDuration = v,
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
+          ),
           ElevatedButton(
             onPressed: () {
-              final nombre = nameCtrl.text.trim();
-              final dur = durCtrl.text.trim();
-              if (nombre.isNotEmpty) {
-                final newWorkout = Workout(name: nombre, duration: dur, day: day);
-                setState(() {
-                  DataService.addActivity(day, newWorkout);
-                  dayRoutines = DataService.getAll();
-                  _filterRoutines(); // <-- refresca el filtro
+              final newWorkout = Workout(
+                name: selectedExercise!,
+                duration: selectedDuration!,
+                
+              );
 
-                });
-                Navigator.pop(ctx);
-              }
+              setState(() {
+                DataService.addActivity(day, newWorkout);
+                dayRoutines = DataService.getAll();
+                _filterRoutines();
+              });
+
+              Navigator.pop(ctx);
             },
-            child: const Text('Agregar'),
+            child: const Text("Agregar"),
           ),
         ],
       ),
     );
   }
+
+  // -----------------------------
+  //   EDITAR ACTIVIDAD
+  // -----------------------------
+
+  void _onEditActivityPressed(String day, Workout activity) {
+    String selectedExercise = activity.name;
+    int selectedDuration = activity.duration;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Editar actividad"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DropdownButtonFormField<String>(
+              value: selectedExercise,
+              decoration: const InputDecoration(labelText: "Ejercicio"),
+              items: availableExercises
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+              onChanged: (v) => selectedExercise = v!,
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<int>(
+              value: selectedDuration,
+              decoration: const InputDecoration(labelText: "Duración (segundos)"),
+              items: availableDurations
+                  .map((d) =>
+                      DropdownMenuItem(value: d, child: Text("$d s")))
+                  .toList(),
+              onChanged: (v) => selectedDuration = v!,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              DataService.removeActivity(day, activity);
+              DataService.addActivity(
+                day,
+                Workout(
+                  name: selectedExercise,
+                  duration: selectedDuration!,
+                
+                ),
+              );
+
+              setState(() {
+                dayRoutines = DataService.getAll();
+                _filterRoutines();
+              });
+
+              Navigator.pop(ctx);
+            },
+            child: const Text("Guardar"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -----------------------------
+  //   ELIMINAR ACTIVIDAD
+  // -----------------------------
+
+  void _deleteActivity(String day, Workout a) {
+    setState(() {
+      DataService.removeActivity(day, a);
+      dayRoutines = DataService.getAll();
+      _filterRoutines();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Actividad "${a.name}" eliminada.')),
+    );
+  }
 }
-
-

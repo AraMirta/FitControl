@@ -20,13 +20,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     List<String> events = [];
 
-    events.addAll(recipes
-        .where((r) => r.day == dayName)
-        .map((r) => "🍽️ ${r.name}"));
-    events.addAll(workouts
-        .where((w) => w.day == dayName)
-        .map((w) => "🏋️ ${w.name}"));
-
+     // Buscamos la rutina del día
+      DayRoutine? routine = sampleDayRoutines.firstWhere(
+        (r) => r.day == dayName,
+        orElse: () => DayRoutine(day: dayName, activities: []),
+      );
+      // Cargamos sus actividades
+      events.addAll(
+        routine.activities.map((w) => "🏋️ ${w.name} (${w.duration} min)")
+      );
     return events;
   }
 
