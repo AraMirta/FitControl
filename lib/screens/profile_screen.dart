@@ -10,10 +10,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String userName = 'Usuario';
+  String userName = '';
   int userAge = 0;
   String userEmail = '';
-  String userGoal = 'Sin objetivo definido';
+  String userGoal = '';
   UserPreferences? userPrefs;
 
   @override
@@ -79,13 +79,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         infoRow(
                           Icons.cake,
                           'Edad',
-                          userAge > 0 ? userAge.toString() : '0',
+                          userAge > 0 ? userAge.toString() : '18',
                         ),
                         const Divider(),
                         infoRow(
                           Icons.email,
                           'Email',
-                          userEmail.isEmpty ? 'usuario@dominio.com' : userEmail,
+                          userEmail.isEmpty ? 'janedoe@dominio.com' : userEmail,
                         ),
                         const Divider(),
                         infoRow(
