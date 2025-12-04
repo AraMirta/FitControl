@@ -36,7 +36,13 @@ final List<String> availableWorkouts = [
   "Funcional",
   "Abdominales",
   "Yoga",
-  "Estiramientos"
+  "Estiramientos",
+  "Correr",
+  "Caminar",
+  "Nadar",
+  "Ciclismo",
+  "flexiones"
+
 ];
 
 // Duraciones disponibles

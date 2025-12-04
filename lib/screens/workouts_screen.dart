@@ -16,17 +16,22 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   List<DayRoutine> filteredRoutines = [];
 
   // Lista fija de ejercicios predefinidos
-  final List<String> availableExercises = [
+  final List<String> availableWorkouts= [
     "Sentadillas",
     "Abdominales",
-    "Burpees",
-    "Plancha",
-    "Zancadas",
-    "Flexiones",
-    "Mountain Climbers",
-    "Salto de cuerda",
-    "HIIT",
     "Funcional",
+    "Cardio ligero",
+    "Cardio intenso",
+    "Fuerza tren superior",
+    "Fuerza tren inferior",
+    "Yoga",
+    "Estiramientos",
+    "Correr",
+    "Caminar",
+    "Nadar",
+    "ciclismo",
+    "flexiones"
+
   ];
 
   // Duración fija
@@ -172,7 +177,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   // -----------------------------
 
   void _onAddActivityPressed(String day) {
-    String? selectedExercise = availableExercises.first;
+    String? selectedExercise = availableWorkouts.first;
     int? selectedDuration = availableDurations.first;
 
     showDialog(
@@ -185,7 +190,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             DropdownButtonFormField<String>(
               value: selectedExercise,
               decoration: const InputDecoration(labelText: "Ejercicio"),
-              items: availableExercises
+              items: availableWorkouts
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                   .toList(),
               onChanged: (v) => selectedExercise = v,
@@ -247,7 +252,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             DropdownButtonFormField<String>(
               value: selectedExercise,
               decoration: const InputDecoration(labelText: "Ejercicio"),
-              items: availableExercises
+              items: availableWorkouts
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                   .toList(),
               onChanged: (v) => selectedExercise = v!,
@@ -276,7 +281,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                 day,
                 Workout(
                   name: selectedExercise,
-                  duration: selectedDuration!,
+                  duration: selectedDuration,
                 
                 ),
               );
