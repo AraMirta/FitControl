@@ -15,20 +15,6 @@ class DayRoutine {
   });
 }
 
-class Recipe {
-  String name;        // Nombre de la receta
-  String day;         // Día de la semana
-  String timeOfDay;   // Mañana, tarde, noche
-  List<String> ingredients; // Ingredientes
-
-  Recipe({
-    required this.name,
-    required this.day,
-    required this.timeOfDay,
-    required this.ingredients,
-  });
-}
-
 // Lista de actividades para seleccionar
 final List<String> availableWorkouts = [
   "Cardio ligero",
@@ -77,35 +63,144 @@ final List<DayRoutine> sampleDayRoutines = [
 
 ];
 
+class Recipe {
+  final String day;        // Lunes, Martes, etc.
+  final String meal;       // Desayuno, Almuerzo, Cena
+  final String name;       // Nombre de la receta
+  final List<String> ingredients; // Lista de ingredientes
 
-//datos ejemplos de recetas.
+  Recipe({
+    required this.day,
+    required this.meal,
+    required this.name,
+    required this.ingredients,
+  });
+}
+
+// Lista de recetas saludables predefinidas
 final List<Recipe> sampleRecipes = [
+  // Lunes
   Recipe(
+    day: "Lunes",
+    meal: "Desayuno",
     name: "Avena con frutas",
-    day: "Lunes",
-    timeOfDay: "Mañana",
-    ingredients: ["Avena", "Leche", "Banana", "Frutos rojos"],
+    ingredients: ["Avena", "Banana", "Manzana", "Leche de soja"],
   ),
   Recipe(
-    name: "Ensalada de pollo",
     day: "Lunes",
-    timeOfDay: "Almuerzo",
-    ingredients: ["Pollo", "Lechuga", "Tomate", "Aceite de oliva"],
+    meal: "Desayuno",
+    name: "Yogur con cereales",
+    ingredients: ["Yogur natural", "Cereales integrales", "Frutas"],
   ),
   Recipe(
-    name: "Yogur con nueces",
     day: "Lunes",
-    timeOfDay: "Merienda",
-    ingredients: ["Yogur natural", "Nueces", "Miel"],
+    meal: "Almuerzo",
+    name: "Pollo con ensalada",
+    ingredients: ["Pechuga de pollo", "Lechuga", "Tomate", "Arroz integral"],
   ),
-  // Repetir para otros días y horarios
+  Recipe(
+    day: "Lunes",
+    meal: "Cena",
+    name: "Sopa de verduras",
+    ingredients: ["Zanahoria", "Zapallo", "Apio", "Caldo de verduras"],
+  ),
+  // Martes (ejemplo)
+  Recipe(
+    day: "Martes",
+    meal: "Desayuno",
+    name: "Pan integral con palta",
+    ingredients: ["Pan integral", "Palta", "Tomate"],
+  ),
+  Recipe(
+    day: "Martes",
+    meal: "Almuerzo",
+    name: "Arroz con pollo y verduras",
+    ingredients: ["Arroz integral", "Pechuga de pollo", "Zapallo", "Zanahoria"],
+  ),
+  Recipe(
+    day: "Martes",
+    meal: "Cena",
+    name: "Ensalada de atún",
+    ingredients: ["Atún", "Lechuga", "Tomate", "Huevo duro"],
+  ),
+  //miercoles
+  Recipe(
+    day: "Miércoles",
+    meal: "Desayuno",
+    name: "Smoothie verde",
+    ingredients: ["Espinaca", "Banana", "Manzana", "Leche de almendra"],
+  ),
+  Recipe(
+    day: "Miércoles",
+    meal: "Almuerzo",
+    name: "Quinoa con verduras",
+    ingredients: ["Quinoa", "Zanahoria", "Zapallo", "Garbanzos"],
+  ),
+  Recipe(
+    day: "Miércoles",
+    meal: "Cena",
+    name: "Tortilla de espinaca",
+    ingredients: ["Huevos", "Espinaca", "Cebolla", "Queso rallado"],
+  ),
+  //jueves
+  Recipe(
+    day: "Jueves",
+    meal: "Desayuno",
+    name: "Tostadas integrales con mermelada",
+    ingredients: ["Pan integral", "Mermelada sin azúcar"],
+  ),
+  Recipe(
+    day: "Jueves",
+    meal: "Almuerzo",
+    name: "Pasta integral con salsa de tomate",
+    ingredients: ["Pasta integral", "Tomate", "Albahaca", "Queso parmesano"],
+  ),
+  Recipe(
+    day: "Jueves",
+    meal: "Cena",
+    name: "Ensalada César",
+    ingredients: ["Lechuga", "Pollo a la plancha", "Queso parmesano", "Aderezo César"],
+  ),
+  //viernes
+  Recipe(
+    day: "Viernes",
+    meal: "Desayuno",
+    name: "Huevos revueltos con tomate",
+    ingredients: ["Huevos", "Tomate", "Cebolla", "Pan integral"],
+  ),
+  Recipe(
+    day: "Viernes",
+    meal: "Almuerzo",
+    name: "Hamburguesa de pavo",
+    ingredients: ["Carne de pavo", "Pan integral", "Lechuga", "Tomate"],
+  ),
+  Recipe(
+    day: "Viernes",
+    meal: "Cena",
+    name: "Pescado al horno con verduras",
+    ingredients: ["Filete de pescado", "Zanahoria", "Zapallo", "Brócoli"],
+  ),
+  //sábado
+  Recipe(
+    day: "Sábado",
+    meal: "Desayuno",
+    name: "Panqueques integrales",
+    ingredients: ["Harina integral", "Huevo", "Leche de almendra", "Miel"],
+  ),
+  Recipe(
+    day: "Sábado",
+    meal: "Almuerzo",
+    name: "Ensalada de quinoa",
+    ingredients: ["Quinoa", "Tomate", "Pepino", "Aceitunas"],
+  ),
+  Recipe(
+    day: "Sábado",
+    meal: "Cena",
+    name: "Pizza casera saludable",
+    ingredients: ["Masa integral", "Salsa de tomate", "Queso bajo en grasa", "Vegetales"],
+  ),
+
+
+  
 ];
-final List<String> daysOfWeek = [
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-  "Domingo",
-];
+

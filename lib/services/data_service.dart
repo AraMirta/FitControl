@@ -22,24 +22,33 @@ class DataService {
     (a) => a.name == workout.name && a.duration == workout.duration
   );
 }
-  // Lista interna de recetas
-  static final List<Recipe> _recipes = [];
+  static final List<String> daysOfWeek = [
+    "Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"
+  ];
+
+  static final List<String> mealTypes = ["Desayuno","Almuerzo","Cena"];
+
+  // Lista interna de recetas seleccionadas por el usuario
+  // Copia de todas las recetas
+  static final List<Recipe> _recipes = List<Recipe>.from(sampleRecipes);
 
   // Devuelve todas las recetas
-  static List<Recipe> getAllRecipes() {
-    return List<Recipe>.from(_recipes); // devuelve copia para evitar cambios directos
+  static List<Recipe> getAllRecipes() => List<Recipe>.from(_recipes);
+
+  // Devuelve recetas filtradas por día y comida
+  static List<Recipe> getRecipesByDayAndMeal(String day, String meal) {
+    return _recipes.where((r) => r.day == day && r.meal == meal).toList();
   }
 
-  // Agrega una receta
+  // Agrega una receta seleccionada (si luego quieres guardar selección)
   static void addRecipe(Recipe recipe) {
     _recipes.add(recipe);
   }
 
-  // Elimina una receta
+  // Elimina receta
   static void removeRecipe(Recipe recipe) {
     _recipes.remove(recipe);
   }
-
-  
-
 }
+
+
