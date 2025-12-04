@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../services/user_preferences.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -18,12 +17,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   UserPreferences? userPrefs;
   String _ageError = '';
   String _nameError = '';
+  int? _selectedAge;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _ageController.addListener(_validateAge);
     _nameController.addListener(_validateName);
   }
 
@@ -41,11 +40,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _validateAge() {
     setState(() {
-      if (_ageController.text.isNotEmpty) {
-        int? age = int.tryParse(_ageController.text);
-        if (age == null) {
-          _ageError = 'Formato no válido';
-        } else if (age < 18) {
+      if (_selectedAge != null) {
+        final age = _selectedAge!;
+        if (age < 18) {
           _ageError = 'La edad debe ser mayor a 18 ';
         } else {
           _ageError = '';
@@ -58,7 +55,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void dispose() {
-    _ageController.removeListener(_validateAge);
     _nameController.removeListener(_validateName);
     _ageController.dispose();
     _nameController.dispose();
@@ -71,7 +67,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     userPrefs = await UserPreferences.getInstance();
     setState(() {
       _nameController.text = userPrefs!.getUserName();
-      _ageController.text = userPrefs!.getUserAge().toString();
+      final a = userPrefs!.getUserAge();
+      _selectedAge = a > 0 ? a : null;
+      _ageController.text = _selectedAge?.toString() ?? '';
       _emailController.text = userPrefs!.getUserEmail();
       _goalController.text = userPrefs!.getUserGoal();
     });
@@ -81,71 +79,102 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Editar Perfil')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Nombre',
-                errorText: _nameError.isNotEmpty ? _nameError : null,
-              ),
-            ),
-            TextField(
-              controller: _ageController,
-              decoration: InputDecoration(
-                labelText: 'Edad',
-                errorText: _ageError.isNotEmpty ? _ageError : null,
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            TextField(
-              controller: _goalController,
-              decoration: InputDecoration(labelText: 'Objetivo'),
-              maxLines: 3,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _ageError.isEmpty && 
-                         _nameError.isEmpty && 
-                         _ageController.text.isNotEmpty &&
-                         _nameController.text.isNotEmpty
-                  ? () async {
-                      // Guardar los datos en SharedPreferences
-                      await userPrefs!.saveUserName(_nameController.text);
-                      await userPrefs!.saveUserAge(
-                        int.tryParse(_ageController.text) ?? 0,
-                      );
-                      await userPrefs!.saveUserEmail(_emailController.text);
-                      await userPrefs!.saveUserGoal(_goalController.text);
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth >= 800;
+          final content = Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView(
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Nombre',
+                    errorText: _nameError.isNotEmpty ? _nameError : null,
+                  ),
+                ),
+                DropdownButtonFormField<int>(
+                  initialValue: _selectedAge,
+                  decoration: InputDecoration(
+                    labelText: 'Edad',
+                    errorText: _ageError.isNotEmpty ? _ageError : null,
+                  ),
+                  items:
+                      List.generate(99, (i) => i + 1)
+                          .map(
+                            (age) => DropdownMenuItem<int>(
+                              value: age,
+                              child: Text(age.toString()),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedAge = val;
+                      _ageController.text = val?.toString() ?? '';
+                      _validateAge();
+                    });
+                  },
+                ),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                TextField(
+                  controller: _goalController,
+                  decoration: InputDecoration(labelText: 'Objetivo'),
+                  maxLines: 3,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed:
+                      _ageError.isEmpty &&
+                              _nameError.isEmpty &&
+                              _selectedAge != null &&
+                              _nameController.text.isNotEmpty
+                          ? () async {
+                            // Guardar los datos en SharedPreferences
+                            await userPrefs!.saveUserName(_nameController.text);
+                            await userPrefs!.saveUserAge(_selectedAge ?? 0);
+                            await userPrefs!.saveUserEmail(
+                              _emailController.text,
+                            );
+                            await userPrefs!.saveUserGoal(_goalController.text);
 
-                      // Mostrar mensaje de confirmación
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('¡Perfil actualizado correctamente!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                            // Mostrar mensaje de confirmación
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    '¡Perfil actualizado correctamente!',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
 
-                        Navigator.pop(
-                          context,
-                          true,
-                        ); // Volver atrás indicando que se guardaron cambios
-                      }
-                    }
-                  : null,
-              child: Text('Guardar cambios'),
+                              Navigator.pop(
+                                context,
+                                true,
+                              ); // Volver atrás indicando que se guardaron cambios
+                            }
+                          }
+                          : null,
+                  child: Text('Guardar cambios'),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+
+          return isWide
+              ? Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 700),
+                  child: content,
+                ),
+              )
+              : content;
+        },
       ),
     );
   }
