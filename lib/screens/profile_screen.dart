@@ -43,91 +43,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
         foregroundColor: Colors.white,
         title: const Text('Mi Perfil'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            // Foto de perfil
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(
-                'assets/images/perfil.png',
-              ), // Asegurate de agregar esta imagen
-              backgroundColor: Colors.grey.shade200,
-            ),
-            const SizedBox(height: 20),
-
-            // Tarjeta de datos personales
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    infoRow(
-                      Icons.person,
-                      'Nombre',
-                      userName.isEmpty ? 'Jane Doe' : userName,
-                    ),
-                    const Divider(),
-                    infoRow(
-                      Icons.cake,
-                      'Edad',
-                      userAge > 0 ? userAge.toString() : '0',
-                    ),
-                    const Divider(),
-                    infoRow(
-                      Icons.email,
-                      'Email',
-                      userEmail.isEmpty ? 'usuario@dominio.com' : userEmail,
-                    ),
-                    const Divider(),
-                    infoRow(
-                      Icons.flag,
-                      'Objetivo',
-                      userGoal.isEmpty
-                          ? 'Ej: Bajar 5 kg en 2 meses '
-                          : userGoal,
-                      color: Colors.green.shade700,
-                    ),
-                  ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth >= 800;
+          final content = SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                // Foto de perfil
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: AssetImage(
+                    'assets/images/perfil.png',
+                  ), // Asegurate de agregar esta imagen
+                  backgroundColor: Colors.grey.shade200,
                 ),
-              ),
-            ),
+                const SizedBox(height: 20),
 
-            const SizedBox(height: 30),
-
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryGreen,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditProfileScreen(),
+                // Tarjeta de datos personales
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-                if (result == true) {
-                  // Recargar datos si se guardaron cambios
-                  _loadUserData();
-                }
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text('Editar perfil'),
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        infoRow(
+                          Icons.person,
+                          'Nombre',
+                          userName.isEmpty ? 'Jane Doe' : userName,
+                        ),
+                        const Divider(),
+                        infoRow(
+                          Icons.cake,
+                          'Edad',
+                          userAge > 0 ? userAge.toString() : '0',
+                        ),
+                        const Divider(),
+                        infoRow(
+                          Icons.email,
+                          'Email',
+                          userEmail.isEmpty ? 'usuario@dominio.com' : userEmail,
+                        ),
+                        const Divider(),
+                        infoRow(
+                          Icons.flag,
+                          'Objetivo',
+                          userGoal.isEmpty
+                              ? 'Ej: Bajar 5 kg en 2 meses '
+                              : userGoal,
+                          color: Colors.green.shade700,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryGreen,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const EditProfileScreen(),
+                      ),
+                    );
+                    if (result == true) {
+                      // Recargar datos si se guardaron cambios
+                      _loadUserData();
+                    }
+                  },
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Editar perfil'),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+
+          return isWide
+              ? Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 700),
+                    child: content,
+                  ),
+                )
+              : content;
+        },
       ),
     );
   }
